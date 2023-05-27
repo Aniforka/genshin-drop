@@ -28,9 +28,9 @@ def read_all_data() -> dict:
                 else:
                     for key1, value1 in value["prizes"].items():
                         if data[key]["prizes"].get(key1, None) is None:
-                            data[key]["prizes"][key1] = value
+                            data[key]["prizes"][key1] = value1
                         else:
-                            data[key]["prizes"][key1]["count"] += value
+                            data[key]["prizes"][key1]["count"] += value1["count"]
 
     return data
 
