@@ -141,7 +141,6 @@ if __name__ == "__main__":
                 create_file_path(datetime.datetime.now()),
                 create_file_path(datetime.datetime.now() - datetime.timedelta(hours=1))
             )
-            print('a')
         except Exception as exp: print(exp)
 
         sleep(3)
