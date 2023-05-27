@@ -120,3 +120,5 @@ if __name__ == "__main__":
         os.system('cls')
         write_statistics(data)
         time.sleep(SPEED)
+
+#return [file for file in os.listdir(path) if os.path.isdir(path + file)]
