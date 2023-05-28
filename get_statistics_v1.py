@@ -1,6 +1,8 @@
 import os
 import json
 
+EPS = 1E-6
+
 PATH = "statistics/"
 
 
@@ -78,15 +80,19 @@ def true_title(title) -> str:
     return new_title
 
 def get_color(min_percent, max_percent, cur_percent) -> str:
-    cur_percent = max(min_percent, min(cur_percent, max_percent))
+    if abs(cur_percent - 100) < EPS:
+        color = f"\033[38;2;{139};{0};{255}m"
 
-    middle = abs(max_percent - min_percent) // 2
-    red = int(255 * (max_percent - cur_percent) / middle)
-    green = int(255 * (cur_percent - min_percent) / middle)
+    else:
+        cur_percent = max(min_percent, min(cur_percent, max_percent))
 
-    blue = 0
+        middle = abs(max_percent - min_percent) // 2
+        red = int(255 * (max_percent - cur_percent) / middle)
+        green = int(255 * (cur_percent - min_percent) / middle)
 
-    color = f"\033[38;2;{red};{green};{blue}m"
+        blue = 0
+
+        color = f"\033[38;2;{red};{green};{blue}m"
 
     return color
 
@@ -113,7 +119,7 @@ def write_statistics(data):
         all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count = calculation_case(data[key])
         case_name = data[key]["case_name"]
 
-        '''if (int(percent_non_expression) != 100):
+        '''if (int(percent_non_expression) == 100):
             continue'''
 
         case_name = true_title(case_name)
