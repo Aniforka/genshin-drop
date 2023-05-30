@@ -194,14 +194,14 @@ def write_statistics(data):
 
     print(
         "┃", "{:^78s}".format("Денег потрачено в минус"),
-        "┃", "{:^78s}".format(str(decline)+' ₽'), "┃"
+        "┃", "{:^78s}".format(' '.join([str(decline)[::-1][i:i+3] for i in range(0, len(str(decline)[::-1]), 3)])[::-1]+' ₽'), "┃"
     )
 
     print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
 
     print(
         "┃", "{:^78s}".format("Всего потрачено денег"),
-        "┃", "{:^78s}".format(str(total_money_spent)+' ₽'), "┃"
+        "┃", "{:^78s}".format(' '.join([str(total_money_spent)[::-1][i:i+3] for i in range(0, len(str(total_money_spent)[::-1]), 3)])[::-1]+' ₽'), "┃"
     )
 
     print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
