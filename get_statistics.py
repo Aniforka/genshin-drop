@@ -125,16 +125,15 @@ def get_processed_data(data):
     return processed_data
 
 
-
-
 def write_statistics(data):
+    all_count = 0
     normal_color = "\033[0m"
     data.sort(key=lambda x: abs(x.percent_non_expression - 100) < EPS, reverse=True)
     #sorted(data, key=attrgetter('percent_non_expression'))
 
     print('┏', '━'*53, '┳', '━'*10, '┳', '━'*8, '┳', '━'*8, '┳', '━'*8,
             '┳', '━'*8, '┳', '━'*37, '┳', '━'*6, '┳', '━'*8, '┓', sep=''
-        )
+    )
 
     print(
             "┃", '\033[1m', "{:^50s}".format("Название кейса"), 
@@ -157,6 +156,7 @@ def write_statistics(data):
         print('┣', '━'*53, '╋', '━'*10, '╋', '━'*8, '╋', '━'*8, '╋', '━'*8,
             '╋', '━'*8, '╋', '━'*37, '╋', '━'*6, '╋', '━'*8, '┫', sep=''
         )
+
         print(
             "┃", "{:^51s}".format(note.case_name), 
             "┃", "{}{:^7.2f}%{}".format(color, note.percent_non_expression, normal_color),
@@ -168,10 +168,25 @@ def write_statistics(data):
             "┃", "{:^3d}₽".format(note.frequent_prize_price),
             "┃", "{:^6d}".format(note.max_count), "┃"
         )
+        
+        all_count += note.all_count
 
-    print('┗', '━'*53, '┻', '━'*10, '┻', '━'*8, '┻', '━'*8, '┻', '━'*8,
-            '┻', '━'*8, '┻', '━'*37, '┻', '━'*6, '┻', '━'*8, '┛', sep=''
-        )
+    # print('┗', '━'*53, '┻', '━'*10, '┻', '━'*8, '┻', '━'*8, '┻', '━'*8,
+    #         '┻', '━'*8, '┻', '━'*37, '┻', '━'*6, '┻', '━'*8, '┛', sep=''
+    # )
+    print('┣', '━'*53, '┻', '━'*10, '┻', '━'*8, '┻', '━'*3, '┳', '━'*4, '┻', '━'*8,
+        '┻', '━'*8, '┻', '━'*37, '┻', '━'*6, '┻', '━'*8, '┫', sep=''
+    )
+
+    print(
+        "┃", "{:^75s}".format("Всего обработанных записей"),
+        "┃", "{:^74d}".format(all_count), "┃"
+    )
+
+    print('┗', '━'*77, '┻', '━'*76, '┛', sep='')
+    
+    #153 символа не включая левую и правую границу
+
 
 if __name__ == "__main__":
     data = read_all_data()
