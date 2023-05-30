@@ -81,16 +81,19 @@ def true_title(title) -> str:
 
     return new_title
 
+def clamp(min_value, cur_value, max_value) -> float:
+    return max(min_value, min(cur_value, max_value))
+
 def get_color(min_percent, max_percent, cur_percent) -> str:
     if abs(cur_percent - 100) < EPS:
         color = f"\033[38;2;{139};{0};{255}m"
 
     else:
-        cur_percent = max(min_percent, min(cur_percent, max_percent))
+        cur_percent = clamp(min_percent, cur_percent, max_percent)
 
         middle = abs(max_percent - min_percent) // 2
-        red = int(255 * (max_percent - cur_percent) / middle)
-        green = int(255 * (cur_percent - min_percent) / middle)
+        red = int(clamp(0, 255 * (max_percent - cur_percent) / middle, 255))
+        green = int(clamp(0, 255 * (cur_percent - min_percent) / middle, 255))
 
         blue = 0
 
