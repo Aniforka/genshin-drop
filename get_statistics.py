@@ -130,6 +130,8 @@ def get_processed_data(data):
 def write_statistics(data):
     all_count = 0
     non_free_count = 0
+    total_money_spent = 0
+    decline = 0
     normal_color = "\033[0m"
     data.sort(key=lambda x: (x.percent_non_expression if abs(x.percent_non_expression - 100) > EPS else -1, x.all_count), reverse=True)
     # отправляет 100% вниз, сортирует сначала по %, а потом по количеству
@@ -175,6 +177,9 @@ def write_statistics(data):
             "┃", "{:^6d}".format(note.max_count), "┃"
         )
         
+        decline += note.unprofitable * note.case_price
+        total_money_spent += note.all_count * note.case_price
+
         if abs(note.percent_non_expression - 100) > EPS:
             non_free_count += note.all_count
 
@@ -186,6 +191,20 @@ def write_statistics(data):
     print('┣', '━'*53, '┻', '━'*10, '┻', '━'*6, '┻', '━'*8, '╋', '━'*8, '┻', '━'*8,
         '┻', '━'*8, '┻', '━'*37, '┻', '━'*6, '┻', '━'*8, '┫', sep=''
     )
+
+    print(
+        "┃", "{:^78s}".format("Денег потрачено в минус"),
+        "┃", "{:^78s}".format(str(decline)+' ₽'), "┃"
+    )
+
+    print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
+
+    print(
+        "┃", "{:^78s}".format("Всего потрачено денег"),
+        "┃", "{:^78s}".format(str(total_money_spent)+' ₽'), "┃"
+    )
+
+    print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
 
     print(
         "┃", "{:^78s}".format("Обработанных записей платных кейсов"),
