@@ -128,7 +128,8 @@ def get_processed_data(data):
 def write_statistics(data):
     all_count = 0
     normal_color = "\033[0m"
-    data.sort(key=lambda x: abs(x.percent_non_expression - 100) < EPS, reverse=True)
+    data.sort(key=lambda x: (x.percent_non_expression if abs(x.percent_non_expression - 100) > EPS else -1, x.all_count), reverse=True)
+    # отправляет 100% вниз, сортирует сначала по %, а потом по количеству
     #sorted(data, key=attrgetter('percent_non_expression'))
 
     print('┏', '━'*53, '┳', '━'*10, '┳', '━'*8, '┳', '━'*8, '┳', '━'*8,
