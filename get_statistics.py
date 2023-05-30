@@ -69,7 +69,7 @@ def calculation_case(case) -> tuple:
 
     percent_non_expression = ((profitably + zero) / all_count) * 100
 
-    return (all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count)
+    return (case_price, all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count)
 
 def true_title(title) -> str:
     new_title = ""
@@ -103,13 +103,13 @@ def get_color(min_percent, max_percent, cur_percent) -> str:
 
 def get_processed_data(data):
     processed_data = list()
-    ProcessedTuple = namedtuple('Twists', 'case_name percent_non_expression all_count \
+    ProcessedTuple = namedtuple('Twists', 'case_name percent_non_expression case_price all_count \
                                 profitably unprofitable zero \
                                 frequent_prize frequent_prize_price max_count'
     )
 
     for key in data.keys():
-        all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count = calculation_case(data[key])
+        case_price, all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count = calculation_case(data[key])
         case_name = data[key]["case_name"]
 
         '''if (int(percent_non_expression) == 100):
@@ -118,7 +118,7 @@ def get_processed_data(data):
         case_name = true_title(case_name)
         frequent_prize = true_title(frequent_prize)
 
-        processed_data.append(ProcessedTuple(case_name, percent_non_expression, all_count,
+        processed_data.append(ProcessedTuple(case_name, percent_non_expression, case_price, all_count,
                                             profitably, unprofitable, zero,
                                             frequent_prize, frequent_prize_price, max_count
             )
@@ -135,13 +135,14 @@ def write_statistics(data):
     # отправляет 100% вниз, сортирует сначала по %, а потом по количеству
     #sorted(data, key=attrgetter('percent_non_expression'))
 
-    print('┏', '━'*53, '┳', '━'*10, '┳', '━'*8, '┳', '━'*8, '┳', '━'*8,
+    print('┏', '━'*53, '┳', '━'*10, '┳', '━'*6, '┳', '━'*8, '┳', '━'*8, '┳', '━'*8,
             '┳', '━'*8, '┳', '━'*37, '┳', '━'*6, '┳', '━'*8, '┓', sep=''
     )
 
     print(
             "┃", '\033[1m', "{:^50s}".format("Название кейса"), 
             "┃", "{:^8s}".format("% побед"),
+            "┃", "{:^4s}".format("Цена"),
             "┃", "{:^6s}".format("Кол-во"),
             "┃", "{:^6s}".format("> цены"),
             "┃", "{:^6s}".format("< цены"),
@@ -157,13 +158,14 @@ def write_statistics(data):
 
         color = get_color(20, 50, note.percent_non_expression)
 
-        print('┣', '━'*53, '╋', '━'*10, '╋', '━'*8, '╋', '━'*8, '╋', '━'*8,
+        print('┣', '━'*53, '╋', '━'*10, '╋', '━'*6, '╋', '━'*8, '╋', '━'*8, '╋', '━'*8,
             '╋', '━'*8, '╋', '━'*37, '╋', '━'*6, '╋', '━'*8, '┫', sep=''
         )
 
         print(
             "┃", "{:^51s}".format(note.case_name), 
             "┃", "{}{:^7.2f}%{}".format(color, note.percent_non_expression, normal_color),
+            "┃", "{:^3d}₽".format(note.case_price),
             "┃", "{:^6d}".format(note.all_count),
             "┃", "{:^6d}".format(note.profitably),
             "┃", "{:^6d}".format(note.unprofitable),
@@ -181,23 +183,23 @@ def write_statistics(data):
     # print('┗', '━'*53, '┻', '━'*10, '┻', '━'*8, '┻', '━'*8, '┻', '━'*8,
     #         '┻', '━'*8, '┻', '━'*37, '┻', '━'*6, '┻', '━'*8, '┛', sep=''
     # )
-    print('┣', '━'*53, '┻', '━'*10, '┻', '━'*8, '┻', '━'*3, '┳', '━'*4, '┻', '━'*8,
+    print('┣', '━'*53, '┻', '━'*10, '┻', '━'*6, '┻', '━'*8, '╋', '━'*8, '┻', '━'*8,
         '┻', '━'*8, '┻', '━'*37, '┻', '━'*6, '┻', '━'*8, '┫', sep=''
     )
 
     print(
-        "┃", "{:^75s}".format("Обработанных записей платных кейсов"),
-        "┃", "{:^74d}".format(non_free_count), "┃"
+        "┃", "{:^78s}".format("Обработанных записей платных кейсов"),
+        "┃", "{:^78d}".format(non_free_count), "┃"
     )
 
-    print('┣', '━'*77, '╋', '━'*76, '┫', sep='')
+    print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
 
     print(
-        "┃", "{:^75s}".format("Всего обработанных записей"),
-        "┃", "{:^74d}".format(all_count), "┃"
+        "┃", "{:^78s}".format("Всего обработанных записей"),
+        "┃", "{:^78d}".format(all_count), "┃"
     )
 
-    print('┗', '━'*77, '┻', '━'*76, '┛', sep='')
+    print('┗', '━'*80, '┻', '━'*80, '┛', sep='')
     
     #153 символа не включая левую и правую границу
 
