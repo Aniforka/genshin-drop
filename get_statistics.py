@@ -126,6 +126,8 @@ def get_processed_data(data):
 
     return processed_data
 
+def turn_number_into_money_string(number):
+    return ' '.join([str(number)[::-1][i:i+3] for i in range(0, len(str(number)[::-1]), 3)])[::-1]+' ₽'
 
 def write_statistics(data):
     all_count = 0
@@ -194,14 +196,24 @@ def write_statistics(data):
 
     print(
         "┃", "{:^78s}".format("Денег потрачено в минус"),
-        "┃", "{:^78s}".format(' '.join([str(decline)[::-1][i:i+3] for i in range(0, len(str(decline)[::-1]), 3)])[::-1]+' ₽'), "┃"
+        "┃", "{:^78s}".format(turn_number_into_money_string(decline)), "┃"
     )
 
     print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
 
     print(
         "┃", "{:^78s}".format("Всего потрачено денег"),
-        "┃", "{:^78s}".format(' '.join([str(total_money_spent)[::-1][i:i+3] for i in range(0, len(str(total_money_spent)[::-1]), 3)])[::-1]+' ₽'), "┃"
+        "┃", "{:^78s}".format(turn_number_into_money_string(total_money_spent)), "┃"
+    )
+
+    print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
+
+    percent_payback = round(100 * (1 - (decline / total_money_spent)), 2)
+    color = get_color(0, 100, percent_payback)
+
+    print(
+        "┃", "{:^78s}".format("Общий процент окупаемости"),
+        "┃", "{}{:^78s}{}".format(color, str(percent_payback) + ' %', normal_color), "┃"
     )
 
     print('┣', '━'*80, '╋', '━'*80, '┫', sep='')
