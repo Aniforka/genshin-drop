@@ -1,5 +1,7 @@
 import os
 import json
+from operator import attrgetter
+from collections import namedtuple
 
 EPS = 1E-6
 
@@ -96,8 +98,39 @@ def get_color(min_percent, max_percent, cur_percent) -> str:
 
     return color
 
+
+def get_processed_data(data):
+    processed_data = list()
+    ProcessedTuple = namedtuple('Twists', 'case_name percent_non_expression all_count \
+                                profitably unprofitable zero \
+                                frequent_prize frequent_prize_price max_count'
+    )
+
+    for key in data.keys():
+        all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count = calculation_case(data[key])
+        case_name = data[key]["case_name"]
+
+        '''if (int(percent_non_expression) == 100):
+            continue'''
+
+        case_name = true_title(case_name)
+        frequent_prize = true_title(frequent_prize)
+
+        processed_data.append(ProcessedTuple(case_name, percent_non_expression, all_count,
+                                            profitably, unprofitable, zero,
+                                            frequent_prize, frequent_prize_price, max_count
+            )
+        )
+
+    return processed_data
+
+
+
+
 def write_statistics(data):
     normal_color = "\033[0m"
+    data.sort(key=lambda x: abs(x.percent_non_expression - 100) < EPS, reverse=True)
+    #sorted(data, key=attrgetter('percent_non_expression'))
 
     print('┏', '━'*53, '┳', '━'*10, '┳', '━'*8, '┳', '━'*8, '┳', '━'*8,
             '┳', '━'*8, '┳', '━'*37, '┳', '━'*6, '┳', '━'*8, '┓', sep=''
@@ -115,30 +148,25 @@ def write_statistics(data):
             "┃", "{:^6s}".format("Кол-во"), "┃",
         '\033[0m')
 
-    for key in data.keys():
-        all_count, profitably, unprofitable, zero, percent_non_expression, frequent_prize, frequent_prize_price, max_count = calculation_case(data[key])
-        case_name = data[key]["case_name"]
-
+    for note in data:
         '''if (int(percent_non_expression) == 100):
             continue'''
 
-        case_name = true_title(case_name)
-        frequent_prize = true_title(frequent_prize)
-        color = get_color(20, 50, percent_non_expression)
+        color = get_color(20, 50, note.percent_non_expression)
 
         print('┣', '━'*53, '╋', '━'*10, '╋', '━'*8, '╋', '━'*8, '╋', '━'*8,
             '╋', '━'*8, '╋', '━'*37, '╋', '━'*6, '╋', '━'*8, '┫', sep=''
         )
         print(
-            "┃", "{:^51s}".format(case_name), 
-            "┃", "{}{:^7.2f}%{}".format(color, percent_non_expression, normal_color),
-            "┃", "{:^6d}".format(all_count),
-            "┃", "{:^6d}".format(profitably),
-            "┃", "{:^6d}".format(unprofitable),
-            "┃", "{:^6d}".format(zero),
-            "┃", "{:^35s}".format(frequent_prize),
-            "┃", "{:^3d}₽".format(frequent_prize_price),
-            "┃", "{:^6d}".format(max_count), "┃"
+            "┃", "{:^51s}".format(note.case_name), 
+            "┃", "{}{:^7.2f}%{}".format(color, note.percent_non_expression, normal_color),
+            "┃", "{:^6d}".format(note.all_count),
+            "┃", "{:^6d}".format(note.profitably),
+            "┃", "{:^6d}".format(note.unprofitable),
+            "┃", "{:^6d}".format(note.zero),
+            "┃", "{:^35s}".format(note.frequent_prize),
+            "┃", "{:^3d}₽".format(note.frequent_prize_price),
+            "┃", "{:^6d}".format(note.max_count), "┃"
         )
 
     print('┗', '━'*53, '┻', '━'*10, '┻', '━'*8, '┻', '━'*8, '┻', '━'*8,
@@ -147,6 +175,7 @@ def write_statistics(data):
 
 if __name__ == "__main__":
     data = read_all_data()
-    write_statistics(data)
+    processed_data = get_processed_data(data)
+    write_statistics(processed_data)
 
 #return [file for file in os.listdir(path) if os.path.isdir(path + file)]
